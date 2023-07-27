@@ -1,38 +1,7 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Drawer,
-  Sider as DefaultSider,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Collapse,
-  Tooltip,
-  Button,
-  IconButton,
-  MuiList,
-} from "@pankod/refine-mui";
-import {
-  ListOutlined,
-  Logout,
-  ExpandLess,
-  ExpandMore,
-  ChevronLeft,
-  ChevronRight,
-  MenuRounded,
-  Dashboard,
-} from "@mui/icons-material";
-import {
-  CanAccess,
-  ITreeMenu,
-  useIsExistAuthentication,
-  useLogout,
-  useTitle,
-  useTranslate,
-  useRouterContext,
-  useMenu,
-  useRefineContext,
-} from "@pankod/refine-core";
+import { Box, Drawer, Sider as DefaultSider, ListItemButton, ListItemIcon, ListItemText, Collapse, Tooltip, Button, IconButton, MuiList } from "@pankod/refine-mui";
+import { ListOutlined, Logout, ExpandLess, ExpandMore, ChevronLeft, ChevronRight, MenuRounded, Dashboard } from "@mui/icons-material";
+import { CanAccess, ITreeMenu, useIsExistAuthentication, useLogout, useTitle, useTranslate, useRouterContext, useMenu, useRefineContext } from "@pankod/refine-core";
 
 import { Title as DefaultTitle } from "../title";
 
@@ -61,9 +30,7 @@ export const Sider: typeof DefaultSider = ({ render }) => {
     setOpen((previousOpen) => {
       const previousOpenKeys: string[] = Object.keys(previousOpen);
       const uniqueKeys = new Set([...previousOpenKeys, ...defaultOpenKeys]);
-      const uniqueKeysRecord = Object.fromEntries(
-        Array.from(uniqueKeys.values()).map((key) => [key, true])
-      );
+      const uniqueKeysRecord = Object.fromEntries(Array.from(uniqueKeys.values()).map((key) => [key, true]));
       return uniqueKeysRecord;
     });
   }, [defaultOpenKeys]);
@@ -93,12 +60,7 @@ export const Sider: typeof DefaultSider = ({ render }) => {
             }}
           >
             <div key={route}>
-              <Tooltip
-                title={label ?? name}
-                placement="right"
-                disableHoverListener={!collapsed}
-                arrow
-              >
+              <Tooltip title={label ?? name} placement="right" disableHoverListener={!collapsed} arrow>
                 <ListItemButton
                   onClick={() => {
                     if (collapsed) {
@@ -154,18 +116,8 @@ export const Sider: typeof DefaultSider = ({ render }) => {
       }
 
       return (
-        <CanAccess
-          key={route}
-          resource={name.toLowerCase()}
-          action="list"
-          params={{ resource: item }}
-        >
-          <Tooltip
-            title={label ?? name}
-            placement="right"
-            disableHoverListener={!collapsed}
-            arrow
-          >
+        <CanAccess key={route} resource={name.toLowerCase()} action="list" params={{ resource: item }}>
+          <Tooltip title={label ?? name} placement="right" disableHoverListener={!collapsed} arrow>
             <ListItemButton
               component={Link}
               to={route}
@@ -211,12 +163,7 @@ export const Sider: typeof DefaultSider = ({ render }) => {
 
   const dashboard = hasDashboard ? (
     <CanAccess resource="dashboard" action="list">
-      <Tooltip
-        title={translate("dashboard.title", "Dashboard")}
-        placement="right"
-        disableHoverListener={!collapsed}
-        arrow
-      >
+      <Tooltip title={translate("dashboard.title", "Dashboard")} placement="right" disableHoverListener={!collapsed} arrow>
         <ListItemButton
           component={Link}
           to="/"
@@ -240,7 +187,9 @@ export const Sider: typeof DefaultSider = ({ render }) => {
             sx={{
               justifyContent: "center",
               minWidth: 36,
-              color: "primary.contrastText",
+              color: "#808191",
+              marginLeft: "6px",
+              marginRight: "14px",
             }}
           >
             <Dashboard />
@@ -259,17 +208,8 @@ export const Sider: typeof DefaultSider = ({ render }) => {
   ) : null;
 
   const logout = isExistAuthentication && (
-    <Tooltip
-      title={t("buttons.logout", "Logout")}
-      placement="right"
-      disableHoverListener={!collapsed}
-      arrow
-    >
-      <ListItemButton
-        key="logout"
-        onClick={() => mutateLogout()}
-        sx={{ justifyContent: "center" }}
-      >
+    <Tooltip title={t("buttons.logout", "Logout")} placement="right" disableHoverListener={!collapsed} arrow>
+      <ListItemButton key="logout" onClick={() => mutateLogout()} sx={{ justifyContent: "center" }}>
         <ListItemIcon
           sx={{
             justifyContent: "center",
@@ -424,10 +364,7 @@ export const Sider: typeof DefaultSider = ({ render }) => {
             width: "36px",
           }}
         >
-          <IconButton
-            sx={{ color: "#fff", width: "36px" }}
-            onClick={() => setOpened((prev) => !prev)}
-          >
+          <IconButton sx={{ color: "#fff", width: "36px" }} onClick={() => setOpened((prev) => !prev)}>
             <MenuRounded />
           </IconButton>
         </Box>

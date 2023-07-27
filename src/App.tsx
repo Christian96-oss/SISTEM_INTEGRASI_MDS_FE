@@ -1,24 +1,16 @@
 import React from "react";
-
 import { Refine, AuthProvider } from "@pankod/refine-core";
-import {
-  notificationProvider,
-  RefineSnackbarProvider,
-  CssBaseline,
-  GlobalStyles,
-  ReadyPage,
-  ErrorComponent,
-} from "@pankod/refine-mui";
-
+import { notificationProvider, RefineSnackbarProvider, CssBaseline, GlobalStyles, ReadyPage, ErrorComponent } from "@pankod/refine-mui";
+import { AccountCircleOutlined, ScheduleOutlined, Handyman, PeopleAltOutlined, StarOutlineRounded, VillaOutlined, AddShoppingCart } from "@mui/icons-material";
 import dataProvider from "@pankod/refine-simple-rest";
-import { MuiInferencer } from "@pankod/refine-inferencer/mui";
 import routerProvider from "@pankod/refine-react-router-v6";
 import axios, { AxiosRequestConfig } from "axios";
 import { ColorModeContextProvider } from "contexts";
 import { Title, Sider, Layout, Header } from "components/layout";
-import { Login } from "pages/login";
 import { CredentialResponse } from "interfaces/google";
 import { parseJwt } from "utils/parse-jwt";
+import { Login, Home, Agents, MyProfile, AllOrder, AllMaterial, SupermarketDetails, AllSupermarket, AllSchedule, CreateSchedule, CreateOrder, AgentProfile, CreateSupermarket, CreateMaterial } from "pages";
+import AllWarehouse from "./pages/all-warehouse";
 
 const axiosInstance = axios.create();
 axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
@@ -33,29 +25,40 @@ axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
 
   return request;
 });
-
 function App() {
   const authProvider: AuthProvider = {
-    login: ({ credential }: CredentialResponse) => {
+    login: async ({ credential }: CredentialResponse) => {
       const profileObj = credential ? parseJwt(credential) : null;
-
+      //save user to mongoDB
       if (profileObj) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...profileObj,
+        const response = await fetch("http://localhost:80/api/v1/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: profileObj.name,
+            email: profileObj.email,
             avatar: profileObj.picture,
-          })
-        );
+          }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              ...profileObj,
+              avatar: profileObj.picture,
+              userid: data._id,
+            })
+          );
+        } else {
+          return Promise.reject();
+        }
       }
-
       localStorage.setItem("token", `${credential}`);
-
       return Promise.resolve();
     },
     logout: () => {
       const token = localStorage.getItem("token");
-
       if (token && typeof window !== "undefined") {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -92,18 +95,59 @@ function App() {
       <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
       <RefineSnackbarProvider>
         <Refine
-          dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+          dataProvider={dataProvider("http://localhost:80/api/v1")}
           notificationProvider={notificationProvider}
           ReadyPage={ReadyPage}
           catchAll={<ErrorComponent />}
           resources={[
             {
-              name: "posts",
-              list: MuiInferencer,
-              edit: MuiInferencer,
-              show: MuiInferencer,
-              create: MuiInferencer,
-              canDelete: true,
+              name: "Supermarket",
+              list: AllSupermarket,
+              show: SupermarketDetails,
+              create: CreateSupermarket,
+              icon: <StarOutlineRounded />,
+            },
+            {
+              name: "material",
+              list: AllMaterial,
+              show: AllMaterial,
+              create: CreateMaterial,
+              icon: <Handyman />,
+            },
+            {
+              name: "Order",
+              list: AllOrder,
+              show: AllOrder,
+              create: CreateOrder,
+              icon: <AddShoppingCart />,
+            },
+            {
+              name: "schedule",
+              list: AllSchedule,
+              show: AllSchedule,
+              create: CreateSchedule,
+              icon: <ScheduleOutlined />,
+            },
+            {
+              name: "agents",
+              options: { label: "User" },
+              list: Agents,
+              show: AgentProfile,
+              icon: <PeopleAltOutlined />,
+            },
+            {
+              name: "my-profile",
+              options: { label: "My Profile" },
+              list: MyProfile,
+              icon: <AccountCircleOutlined />,
+            },
+            {
+              name: "warehouse",
+              options: { label: "Warehouse" },
+              list: AllWarehouse,
+              show: AllWarehouse,
+              create: CreateSchedule,
+              icon: <ScheduleOutlined />,
             },
           ]}
           Title={Title}
@@ -113,6 +157,7 @@ function App() {
           routerProvider={routerProvider}
           authProvider={authProvider}
           LoginPage={Login}
+          DashboardPage={Home}
         />
       </RefineSnackbarProvider>
     </ColorModeContextProvider>

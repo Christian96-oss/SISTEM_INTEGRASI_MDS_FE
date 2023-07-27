@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useLogin } from "@pankod/refine-core";
 import { Container, Box } from "@pankod/refine-mui";
-
 import { CredentialResponse } from "../interfaces/google";
-
+import TextField from "@mui/material/TextField";
+import { Datetime, CustomButton } from "components";
 export const Login: React.FC = () => {
   const { mutate: login } = useLogin<CredentialResponse>();
 
@@ -18,7 +18,7 @@ export const Login: React.FC = () => {
       try {
         window.google.accounts.id.initialize({
           ux_mode: "popup",
-          client_id: "your-client-id",
+          client_id: "259550391718-k5qcicrfv90mi88r9stc16d0lnt83fqk.apps.googleusercontent.com",
           callback: async (res: CredentialResponse) => {
             if (res.credential) {
               login(res);
@@ -64,11 +64,12 @@ export const Login: React.FC = () => {
             alignItems: "center",
           }}
         >
-          <div>
-            <img src="./refine.svg" alt="Refine Logo" />
-          </div>
+          Sistem Integrasi antara AGV dan MDS
+          <TextField variant="outlined" color="info" placeholder="Username" />
+          <TextField variant="outlined" color="info" placeholder="Password" />
+          {}
           <Box mt={4}>
-            <GoogleButton />
+            <CustomButton title="Login" backgroundColor="#475be8" color="#fcfcfc" />
           </Box>
         </Box>
       </Container>
